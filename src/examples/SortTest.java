@@ -15,7 +15,26 @@ public class SortTest {
 	
 	public static long cnt;
 	static Random rand = new Random();
+	static int [] b;	
+
 	
+	public static void mergeSort(int [] a){
+		b  = new int[a.length];
+		mSort(a,0,a.length-1);
+	}
+
+	private static void mSort(int[] a, int from, int to) {
+		if (from == to) return;
+		int mid = (from+to)/2;
+		mSort(a,from,mid);
+		mSort(a,mid+1,to);
+		merge(a,from,mid,to);
+		
+	}
+	private static void merge(int[] a, int from, int mid, int to) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	/**
 	 * @param a int aray
@@ -37,6 +56,7 @@ public class SortTest {
 		cnt=0;
 		int m = a.length-1;
 		for(int i=m; i>0; i--){ 
+
 			for (int k=0; k < i; k++){
 				if(a[k]>a[k+1]) swap(a,k,k+1);
 			}
@@ -60,7 +80,7 @@ public class SortTest {
 
 	public static void main(String[] args) {
 		long t1=0,t2=0,te1=0,te2=0,eTime=0,time=0;
-		int n = 10000;
+		int n = 100000;
 		// we need a random generator
 		Random rand=new Random();
 		//rand.setSeed(54326346); // initialize always in the same state
