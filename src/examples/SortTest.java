@@ -15,43 +15,6 @@ public class SortTest {
 	
 	public static long cnt;
 	static Random rand = new Random();
-	static int [] b;	
-
-	
-	public static void mergeSort(int [] a){
-		b  = new int[a.length];
-		mSort(a,0,a.length-1);
-	}
-
-	private static void mSort(int[] a, int from, int to) {
-		if (from == to) return;
-		int mid = (from+to)/2;
-		mSort(a,from,mid);
-		mSort(a,mid+1,to);
-		merge(a,from,mid,to);
-		
-	}
-
-	private static void merge(int[] a, int from, int mid, int to) {
-		//merge a[from..mid] and a[mid+1..to] into b[from..to] and copy back
-		int fPtr=from,  // first half
-			sPtr=mid+1, // second half
-			toPtr=from; // target position in b
-		while (true){
-			if (sPtr>to){ // second half is copied
-				// copy the rest of the first section
-				
-				while (toPtr<=to) b[toPtr++]=a[fPtr++];
-				break;
-			}
-			if (fPtr>mid) break; // first half is copied (rest of second section is allready correct)
-			if (a[fPtr] > a[sPtr]) b[toPtr++] = a[sPtr++];
-			else b[toPtr++]=a[fPtr++];
-		}
-		// copy back
-		while (--toPtr >=from) a[toPtr] = b[toPtr];
-		
-	}
 
 	/**
 	 * @param a int aray
@@ -97,7 +60,7 @@ public class SortTest {
 
 	public static void main(String[] args) {
 		long t1=0,t2=0,te1=0,te2=0,eTime=0,time=0;
-		int n = 10000000;
+		int n = 100000000;
 		// we need a random generator
 		Random rand=new Random();
 		//rand.setSeed(54326346); // initialize always in the same state
@@ -110,7 +73,7 @@ public class SortTest {
 		// get Time
 		te1=System.currentTimeMillis();
 		t1 = threadBean.getCurrentThreadCpuTime();
-		mergeSort(a);
+		bubbleSort(a);
 		te2 = System.currentTimeMillis();
 		t2 = threadBean.getCurrentThreadCpuTime();
 		time=t2-t1;
