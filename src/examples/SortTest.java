@@ -44,7 +44,22 @@ public class SortTest {
 	private static void merge(int[] a, int from, int mid, int to) {
 		// merge the sections a[from..mid] and a[mid+1..to] into
 		// b[from..to] and copy back
-		
+		int fPtr=from,sPtr=mid+1,toPtr=from;
+		while(true){
+			if (fPtr > mid) break; // reminder of second section already ok
+			else if( sPtr>to) {
+				// copy the reminder of first section
+				while(fPtr <= mid) b[toPtr++] = a[fPtr++];
+				break;
+			}
+			else {
+				// both sections still have something to merge
+				// copy the smaller of the candidates
+				if (a[sPtr]>a[fPtr]) b[toPtr++]=a[fPtr++];
+				else b[toPtr++]=a[sPtr++];
+			}
+		}
+		while (--toPtr >= from) a[toPtr] = b[toPtr];		
 	}
 
 	/**
@@ -76,10 +91,9 @@ public class SortTest {
 		cnt++;
 	}
 
-
 	public static void main(String[] args) {
 		long t1=0,t2=0,te1=0,te2=0,eTime=0,time=0;
-		int n = 100000000;
+		int n = 10000000;
 		// we need a random generator
 		Random rand=new Random();
 		//rand.setSeed(54326346); // initialize always in the same state
@@ -92,7 +106,7 @@ public class SortTest {
 		// get Time
 		te1=System.currentTimeMillis();
 		t1 = threadBean.getCurrentThreadCpuTime();
-		bubbleSort(a);
+		mergeSort(a);
 		te2 = System.currentTimeMillis();
 		t2 = threadBean.getCurrentThreadCpuTime();
 		time=t2-t1;
