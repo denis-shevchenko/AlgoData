@@ -55,8 +55,8 @@ public class SortTest {
 			else {
 				// both sections still have something to merge
 				// copy the smaller of the candidates
-				if (a[sPtr]>a[fPtr]) b[toPtr++]=a[fPtr++];
-				else b[toPtr++]=a[sPtr++];
+				if (a[sPtr] > a[fPtr]) b[toPtr++]=a[fPtr++];
+				else b[toPtr++] = a[sPtr++];
 			}
 		}
 		while (--toPtr >= from) a[toPtr] = b[toPtr];		
