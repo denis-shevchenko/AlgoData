@@ -32,4 +32,5 @@ public interface Stack<E>{
 	 */
 	public boolean isEmpty();
 	
+	
 }
