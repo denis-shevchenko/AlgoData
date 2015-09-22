@@ -21,12 +21,20 @@ public class MyStack<E> implements Stack<E> {
 
 	@Override
 	public E pop() {
-		return stor[--ptr];
+		try {
+			return stor[--ptr];
+		} catch (IndexOutOfBoundsException e) {
+			throw new RuntimeException("stack underflow");
+		}
 	}
 
 	@Override
 	public E top() {
-		return stor[ptr-1];
+		try {
+			return stor[ptr-1];
+		} catch (IndexOutOfBoundsException e) {
+			throw new RuntimeException("stack underflow");
+		}
 	}
 
 	@Override
@@ -43,6 +51,12 @@ public class MyStack<E> implements Stack<E> {
 		MyStack<String> st = new MyStack();
 		st.push("hans");
 		st.push("Beat");
+		st.push("Ida");
+		st.push("Susi");
+		st.pop();
+		st.pop();
+		st.pop();
+		st.pop();
 		String last = st.pop();
 		System.out.println(last);
 	}
