@@ -2,6 +2,8 @@ package examples;
 
 import java.util.Iterator;
 
+import examples.MyLinkedList2.LNode;
+
 
 public class MyLinkedList<E> implements List<E> {
 	
@@ -107,8 +109,17 @@ public class MyLinkedList<E> implements List<E> {
 	@Override
 	public Position<E> insertBefore(Position<E> p, E o) {
 		LNode n = castToLNode(p);
+		LNode newN = new LNode();
+		newN.elem = o;
 		
-		return null;
+		
+		newN.next = n;
+		newN.prev = n.prev;
+		n.prev = newN;
+		if (newN.prev==null) first = newN ;
+		else newN.prev.next = newN;
+		size++;
+		return newN;	
 	}
 
 	@Override
