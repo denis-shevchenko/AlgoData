@@ -12,8 +12,7 @@ public class MyLinkedList<E> implements List<E> {
 		@Override
 		public E element() {
 			return elem;
-		}
-		
+		}		
 	}
 	
 	// instance variables of MyLinkedList
@@ -22,14 +21,12 @@ public class MyLinkedList<E> implements List<E> {
 
 	@Override
 	public Position<E> first() {
-		// TODO Auto-generated method stub
-		return null;
+		return first;
 	}
 
 	@Override
 	public Position<E> last() {
-		// TODO Auto-generated method stub
-		return null;
+		return last;
 	}
 
 	@Override
@@ -46,14 +43,16 @@ public class MyLinkedList<E> implements List<E> {
 
 	@Override
 	public Position<E> next(Position<E> p) {
-		// TODO Auto-generated method stub
-		return null;
+		LNode n = (LNode) p;
+		if (n.creator != this)throw new RuntimeException("invalid position");
+		return n.next;
 	}
 
 	@Override
 	public Position<E> previous(Position<E> p) {
-		// TODO Auto-generated method stub
-		return null;
+		LNode n = (LNode) p;
+		if (n.creator != this)throw new RuntimeException("invalid position");
+		return n.prev;
 	}
 
 	@Override
@@ -64,8 +63,13 @@ public class MyLinkedList<E> implements List<E> {
 
 	@Override
 	public Position<E> insertFirst(E o) {
-		// TODO Auto-generated method stub
-		return null;
+		LNode n = new LNode();
+		n.elem = o;
+		n.next = first;
+		if (first != null)	first.prev = n;
+		else last = n;
+		first = n;
+		return n;
 	}
 
 	@Override
@@ -122,11 +126,12 @@ public class MyLinkedList<E> implements List<E> {
 		ll.insertFirst("beat");
 		ll.insertFirst("ida");
 		ll.insertAfter(p,"hans 2");
-		Iterator<String> it = ll.elements();
-		while (it.hasNext()){
-			String s = it.next();
-			System.out.println(s);
-		}
+		System.out.println(ll.previous(ll.previous(p)).element());
+//		Iterator<String> it = ll.elements();
+//		while (it.hasNext()){
+//			String s = it.next();
+//			System.out.println(s);
+//		}
 		
 		
 		
