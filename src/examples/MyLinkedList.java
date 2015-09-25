@@ -2,25 +2,31 @@ package examples;
 
 import java.util.Iterator;
 
-public class MyLinkedList<E> implements List<E> {
 
+public class MyLinkedList<E> implements List<E> {
+	
 	// auxiliary class for the nodes
 	class LNode implements Position<E>{
 		E elem;
-		LNode prev,next; 
+		LNode prev,next;
 		Object creator = MyLinkedList.this;
+		
 		@Override
 		public E element() {
 			return elem;
 		}		
 	}
+	
 
-	
-	
-	// instance variables of MyLinkedList
+	// instance variables
 	private LNode first,last;
 	private int size;
 
+	
+	/**
+	 * @param p a position which should belong to this MyLinkedList instance
+	 * @return the casted object 'p' which (is tested for validity)
+	 */
 	private LNode castToLNode(Position p){
 		LNode n;
 		try {
@@ -31,9 +37,8 @@ public class MyLinkedList<E> implements List<E> {
 		if (n.creator == null) throw new RuntimeException("position was allready deleted!");
 		if (n.creator != this) throw new RuntimeException("position belongs to another MyLinkedList instance!");			
 		return n;
-}
-	
-	
+	}
+
 	@Override
 	public Position<E> first() {
 		return first;
@@ -59,15 +64,14 @@ public class MyLinkedList<E> implements List<E> {
 	@Override
 	public Position<E> next(Position<E> p) {
 		LNode n = (LNode) p;
-		if (n.creator != this)throw new RuntimeException("invalid position");
+		if (n.creator != this) throw new RuntimeException("invalis Position");
 		return n.next;
 	}
 
 	@Override
 	public Position<E> previous(Position<E> p) {
-		LNode n = (LNode) p;
-		if (n.creator != this)throw new RuntimeException("invalid position");
-		return n.prev;
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
@@ -81,21 +85,29 @@ public class MyLinkedList<E> implements List<E> {
 		LNode n = new LNode();
 		n.elem = o;
 		n.next = first;
-		if (first != null)	first.prev = n;
-		else last = n;
+		if (first == null) last=n;
+		else first.prev = n;
 		first = n;
+		size++;
 		return n;
 	}
 
 	@Override
 	public Position<E> insertLast(E o) {
-		// TODO Auto-generated method stub
-		return null;
+		LNode n = new LNode();
+		n.elem = o;
+		n.prev = last;
+		if (last == null) first=n;
+		else last.next = n;
+		last = n;
+		size++;
+		return n;		
 	}
 
 	@Override
 	public Position<E> insertBefore(Position<E> p, E o) {
-		// TODO Auto-generated method stub
+		LNode n = castToLNode(p);
+		
 		return null;
 	}
 
@@ -136,20 +148,23 @@ public class MyLinkedList<E> implements List<E> {
 	}
 
 	public static void main(String[] args) {
-		List<String> ll = new MyLinkedList<>(); 
-		Position<String> p = ll.insertFirst("hans");
-		ll.insertFirst("beat");
-		ll.insertFirst("ida");
-		ll.insertAfter(p,"hans 2");
-		System.out.println(ll.previous(ll.previous(p)).element());
-//		Iterator<String> it = ll.elements();
+		List<String> li = new MyLinkedList<>();
+		Position<String> p =li.insertFirst("hans");
+		li.insertFirst("beat");
+		p = li.insertFirst("ida");
+		System.out.println(li.next(li.next(p)).element());
+		//li.insertBefore(p,"hans 1");
+		//Iterator<String> it = li.elements();
+		
+		li.remove(p);
+		li.insertAfter(p, "bla");
 //		while (it.hasNext()){
 //			String s = it.next();
 //			System.out.println(s);
 //		}
 		
 		
-		
+				
 	}
 
 }
