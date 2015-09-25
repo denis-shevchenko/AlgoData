@@ -14,11 +14,26 @@ public class MyLinkedList<E> implements List<E> {
 			return elem;
 		}		
 	}
+
+	
 	
 	// instance variables of MyLinkedList
 	private LNode first,last;
 	private int size;
 
+	private LNode castToLNode(Position p){
+		LNode n;
+		try {
+			n = (LNode) p;
+		} catch (ClassCastException e) {
+			throw new RuntimeException("This is not a Position belonging to MyLinkedList"); 
+		}
+		if (n.creator == null) throw new RuntimeException("position was allready deleted!");
+		if (n.creator != this) throw new RuntimeException("position belongs to another MyLinkedList instance!");			
+		return n;
+}
+	
+	
 	@Override
 	public Position<E> first() {
 		return first;
