@@ -1,6 +1,7 @@
 package examples;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class MyLinkedList<E> implements List<E> {
 	
@@ -50,33 +51,35 @@ public class MyLinkedList<E> implements List<E> {
 
 	@Override
 	public boolean isFirst(Position<E> p) {
-		// TODO Auto-generated method stub
-		return false;
+		return castToLNode(p)==first;
 	}
 
 	@Override
 	public boolean isLast(Position<E> p) {
-		// TODO Auto-generated method stub
-		return false;
+		return castToLNode(p)==last;
 	}
 
 	@Override
 	public Position<E> next(Position<E> p) {
-		LNode n = (LNode) p;
-		if (n.creator != this) throw new RuntimeException("invalis Position");
+		LNode n = castToLNode(p);
+		if (n==last) throw new RuntimeException("There is no next position!");
 		return n.next;
 	}
 
 	@Override
 	public Position<E> previous(Position<E> p) {
-		// TODO Auto-generated method stub
-		return null;
+		LNode n = castToLNode(p).prev;
+		if (n==first) throw new RuntimeException("There is no previous position!");
+		return n.prev;
+
 	}
 
 	@Override
 	public E replaceElement(Position<E> p, E o) {
-		// TODO Auto-generated method stub
-		return null;
+		LNode n = castToLNode(p);
+		E old = n.elem;
+		n.elem = o;
+		return old;
 	}
 
 	@Override
@@ -108,51 +111,102 @@ public class MyLinkedList<E> implements List<E> {
 		LNode n = castToLNode(p);
 		LNode newN = new LNode();
 		newN.elem = o;
-		
-		
 		newN.next = n;
-		newN.prev = n.prev;
+		if (n.prev==null) first = newN ;
+		else {
+			newN.prev = n.prev;
+			newN.prev.next = newN;
+		}
 		n.prev = newN;
-		if (newN.prev==null) first = newN ;
-		else newN.prev.next = newN;
 		size++;
 		return newN;	
 	}
 
 	@Override
 	public Position<E> insertAfter(Position<E> p, E o) {
-		// TODO Auto-generated method stub
-		return null;
+		LNode n = castToLNode(p);
+		LNode newN = new LNode();
+		newN.elem = o;
+		newN.prev = n;
+		if (n.next==null) last = newN ;
+		else {
+			newN.next = n.next;
+			newN.next.prev = newN;
+		}
+		n.next = newN;
+		size++;
+		return newN;	
 	}
 
 	@Override
 	public void remove(Position<E> p) {
-		// TODO Auto-generated method stub
-
+		LNode n = castToLNode(p);
+		size--;
+		n.creator = null; // invalidate p!
+		
+		// left side:
+		if (n==first) {
+			first=n.next;
+			if (first != null) first.prev = null;
+		}
+		else n.prev.next = n.next;
+		
+		// right side:
+		if (n==last) {
+			last =n.prev;
+			if (last!=null) last.next = null;
+		}
+		else n.next.prev = n.prev;
 	}
 
 	@Override
 	public Iterator<Position<E>> positions() {
-		// TODO Auto-generated method stub
-		return null;
+		return new Iterator<Position<E>>(){
+			LNode currentNode = first;
+
+			@Override
+			public boolean hasNext() {
+				return currentNode != null;
+			}
+
+			@Override
+			public Position<E> next() {
+				if (currentNode == null) throw new NoSuchElementException("there are no more elments in this LinkedList");
+				LNode ret = currentNode;
+				currentNode = currentNode.next;
+				return ret;
+			}			
+		};
 	}
 
 	@Override
 	public Iterator<E> elements() {
-		// TODO Auto-generated method stub
-		return null;
+		return new Iterator<E>(){
+			LNode currentNode = first;
+
+			@Override
+			public boolean hasNext() {
+				return currentNode != null;
+			}
+
+			@Override
+			public E next() {
+				if (currentNode == null) throw new NoSuchElementException("there are no more elments in this LinkedList");
+				LNode ret = currentNode;
+				currentNode = currentNode.next;
+				return ret.elem;
+			}
+		};
 	}
 
 	@Override
 	public int size() {
-		// TODO Auto-generated method stub
-		return 0;
+		return size;
 	}
 
 	@Override
 	public boolean isEmpty() {
-		// TODO Auto-generated method stub
-		return false;
+		return size==0;
 	}
 
 	public static void main(String[] args) {
@@ -161,15 +215,16 @@ public class MyLinkedList<E> implements List<E> {
 		li.insertFirst("beat");
 		p = li.insertFirst("ida");
 		System.out.println(li.next(li.next(p)).element());
-		//li.insertBefore(p,"hans 1");
-		//Iterator<String> it = li.elements();
+		li.insertBefore(p,"hans 1");
+		Iterator<String> it = li.elements();
 		
-		li.remove(p);
+		// li.remove(p);
 		li.insertAfter(p, "bla");
-//		while (it.hasNext()){
-//			String s = it.next();
-//			System.out.println(s);
-//		}
+		li.remove(p);
+		while (it.hasNext()){
+			String s = it.next();
+			System.out.println(s);
+		}
 		
 		
 				
