@@ -2,9 +2,6 @@ package examples;
 
 import java.util.Iterator;
 
-import examples.MyLinkedList2.LNode;
-
-
 public class MyLinkedList<E> implements List<E> {
 	
 	// auxiliary class for the nodes
