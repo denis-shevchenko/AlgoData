@@ -207,7 +207,6 @@ public class MyTree<E> implements Tree<E> {
 		return height(root);
 	}
 
-
 	private int height(Position<E> r) {
 		int h=0;
 		Iterator<Position<E>> it = childrenPositions(r);
@@ -240,6 +239,7 @@ public class MyTree<E> implements Tree<E> {
 	static int maxDepth;
 	
 	static Position deepestPos(Tree t){
+		maxDepth=0;
 		deepest = t.root();
 		if (t.size() == 0) return null;
 		deepestPos(t,t.root(),0);
