@@ -216,16 +216,22 @@ public class MyLinkedList<E> implements List<E> {
 		p = li.insertFirst("ida");
 		System.out.println(li.next(li.next(p)).element());
 		li.insertBefore(p,"hans 1");
-		Iterator<String> it = li.elements();
 		
 		// li.remove(p);
 		li.insertAfter(p, "bla");
 		li.remove(p);
+		System.out.println("--");
+		Iterator<Position<String>> it = li.positions();
 		while (it.hasNext()){
-			String s = it.next();
-			System.out.println(s);
+			Position<String> pi = it.next();
+			if (pi.element().equals("bla")) li.remove(pi);
+			System.out.println(pi.element());
 		}
-		
+		System.out.println("--");
+		Iterator<String> it2 = li.elements();  
+		while (it2.hasNext()){
+			System.out.println(it2.next());
+		}
 		
 				
 	}
