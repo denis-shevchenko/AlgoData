@@ -90,7 +90,8 @@ public interface Tree<E> {
 	public Position<E> addSiblingBefore(Position<E> sibling, E o);
 
 	/**
-	 * @param p a (valid) Position to be removed from this tree
+	 * @param p a (valid) Position to be removed from this tree 
+	 * ( throws an exception if p has children)
 	 */
 	public void remove(Position<E> p);
 
