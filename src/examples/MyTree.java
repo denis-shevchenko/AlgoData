@@ -13,7 +13,7 @@ public class MyTree<E> implements Tree<E> {
 		E elem;
 		TNode parent;
 		MyLinkedList<TNode> children = new MyLinkedList<>();
-		Position<TNode> childrenPos;
+		Position<TNode> childrenPos; // Position in the children LinkedList
 		Object creator = MyTree.this;
 
 		@Override
@@ -29,7 +29,7 @@ public class MyTree<E> implements Tree<E> {
 	private TNode root;
 	private int size;
 	
-	private TNode castToTNode(Position p){
+	private TNode castToTNode(Position<E> p){
 		TNode n;
 		try {
 			n = (TNode) p;
@@ -102,8 +102,23 @@ public class MyTree<E> implements Tree<E> {
 
 	@Override
 	public Position<E> insertParent(Position<E> p, E o) {
-		// TODO Auto-generated method stub
-		return null;
+		TNode n = castToTNode(p);
+		TNode newP = new TNode();
+		newP.elem=o;
+		if (n == root){
+			root = newP;
+		}
+		else {
+			// newP takes the former role of n:
+			newP.parent = n.parent;
+			newP.childrenPos = n.childrenPos; // we take the position of p
+			newP.parent.children.replaceElement(newP.childrenPos,newP);		
+		}
+		//make 'p' a child of the new position
+		n.parent = newP;
+		n.childrenPos = newP.children.insertFirst(n);
+		size++;
+		return newP;	
 	}
 
 	@Override
@@ -119,20 +134,50 @@ public class MyTree<E> implements Tree<E> {
 
 	@Override
 	public Position<E> addChildAt(int pos, Position<E> parent, E o) {
-		// TODO Auto-generated method stub
-		return null;
+		TNode p = castToTNode(parent);
+		if (pos > p.children.size()|| pos < 0 ) throw new RuntimeException("invalid rank");
+		TNode n = new TNode();
+		n.elem = o;
+		n.parent = p;
+		Position<TNode> linkedListPosition = null;
+		if (pos == 0) linkedListPosition = p.children.insertFirst(n); 
+		else if (pos == p.children.size()) linkedListPosition = p.children.insertLast(n); 
+		else {
+			Iterator<Position<TNode>> it = p.children.positions();
+			// skip pos-2 nodes
+			for (int i=0;i<pos-1;i++){
+				it.next();
+			}
+			Position<TNode> lPos = (it.next()); // lPos is the LinkedList-position before the insertion point
+			linkedListPosition = p.children.insertAfter(lPos, n);
+		}
+		n.childrenPos = linkedListPosition;
+		size++;
+		return n;
 	}
 
 	@Override
 	public Position<E> addSiblingAfter(Position<E> sibling, E o) {
-		// TODO Auto-generated method stub
-		return null;
+		TNode sib = castToTNode(sibling);
+		if (sib == root) throw new RuntimeException("root can not have siblings!");
+		TNode newN = new TNode();
+		newN.elem = o;
+		newN.parent = sib.parent;
+		newN.childrenPos = sib.parent.children.insertAfter(sib.childrenPos,newN);
+		size++;
+		return newN;
 	}
 
 	@Override
 	public Position<E> addSiblingBefore(Position<E> sibling, E o) {
-		// TODO Auto-generated method stub
-		return null;
+		TNode sib = castToTNode(sibling);
+		if (sib == root) throw new RuntimeException("root can not have siblings!");
+		TNode newN = new TNode();
+		newN.elem = o;
+		newN.parent = sib.parent;
+		newN.childrenPos = sib.parent.children.insertBefore(sib.childrenPos,newN);
+		size++;
+		return newN;
 	}
 
 	@Override
@@ -153,14 +198,14 @@ public class MyTree<E> implements Tree<E> {
 	
 	@Override
 	public boolean isExternal(Position<E> p) {
-		// TODO Auto-generated method stub
-		return false;
+		TNode n = castToTNode(p);
+		return n.children.size()==0;
 	}
 
 	@Override
 	public boolean isInternal(Position<E> p) {
-		// TODO Auto-generated method stub
-		return false;
+		TNode n = castToTNode(p);
+		return n.children.size()>0;
 	}
 
 	@Override
@@ -183,8 +228,10 @@ public class MyTree<E> implements Tree<E> {
 
 	@Override
 	public E replaceElement(Position<E> p, E o) {
-		// TODO Auto-generated method stub
-		return null;
+		TNode n = castToTNode(p);
+		E old = n.elem;
+		n.elem = o;
+		return old;
 	}
 	
 	public String toString(){
