@@ -2,14 +2,14 @@ package examples;
 
 public class MyPriorityQueue<K extends Comparable<? super K>, E> implements
 		PriorityQueue<K, E> {
-
-	//auxiliary class for the locators
-	class PQLoc<K1 extends Comparable<? super K1>, E1> implements Locator<K1 ,E1>{
+	
+	// auxiliary class for the locators
+	class PQLoc<K1 extends Comparable<? super K1>,E1> implements Locator<K1 , E1>{
 		
-		Object creator = MyPriorityQueue.this;
 		E1 elem;
 		K1 key;
-		int pos;  // index in our data stor (heap array)
+		Object creator = MyPriorityQueue.this;
+		int pos; // index in the heap array
 		
 		@Override
 		public E1 element() {
@@ -23,13 +23,16 @@ public class MyPriorityQueue<K extends Comparable<? super K>, E> implements
 		
 	}
 
-	private PQLoc<K,E> [] stor =(PQLoc<K,E>[]) new Object[256];
+	// instance variables
+	
+	private PQLoc<K,E> [] stor =(PQLoc<K,E>[]) new PQLoc[256]; 
 	private int size;
+	
 	
 	@Override
 	public Locator<K, E> showMin() {
-		// TODO Auto-generated method stub
-		return null;
+		if (size == 0) return null;
+		return stor[1];
 	}
 
 	@Override
@@ -41,15 +44,15 @@ public class MyPriorityQueue<K extends Comparable<? super K>, E> implements
 	@Override
 	public Locator<K, E> insert(K key, E element) {
 		PQLoc<K,E> loc = new PQLoc<>();
-		loc.key = key;
 		loc.elem = element;
-		stor[++size] = loc;
+		loc.key=key;
+		stor[++size]=loc;
 		upHeap(size);
-		loc.pos=size;
 		return loc;
 	}
 
-	private void upHeap(int i) {
+	private void upHeap(int size2) {
+		// TODO Auto-generated method stub
 		
 	}
 
@@ -78,8 +81,12 @@ public class MyPriorityQueue<K extends Comparable<? super K>, E> implements
 	}
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
+		PriorityQueue<Integer,String> pq = new MyPriorityQueue<>();
+		pq.insert(7,"bla");
+		pq.insert(11,"bla");
+		pq.insert(5,"bla");
+		pq.insert(4,"bla");
+		System.out.println(pq.showMin().key());
 	}
 
 }
