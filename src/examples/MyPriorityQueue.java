@@ -1,7 +1,5 @@
 package examples;
 
-import examples.MyPriorityQueue4.PQLoc;
-
 public class MyPriorityQueue<K extends Comparable<? super K>, E> implements
 		PriorityQueue<K, E> {
 	
