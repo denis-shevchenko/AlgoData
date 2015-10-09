@@ -154,7 +154,7 @@ public class SortTest {
 		// get Time
 		te1=System.currentTimeMillis();
 		t1 = threadBean.getCurrentThreadCpuTime();
-		heapSort(a);
+		mergeSort(a);
 		// System.out.println("heap? "+heapCheck(a));
 		te2 = System.currentTimeMillis();
 		t2 = threadBean.getCurrentThreadCpuTime();

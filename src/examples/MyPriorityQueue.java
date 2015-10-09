@@ -1,5 +1,7 @@
 package examples;
 
+import examples.MyPriorityQueue4.PQLoc;
+
 public class MyPriorityQueue<K extends Comparable<? super K>, E> implements
 		PriorityQueue<K, E> {
 	
@@ -28,6 +30,19 @@ public class MyPriorityQueue<K extends Comparable<? super K>, E> implements
 	private PQLoc<K,E> [] stor =(PQLoc<K,E>[]) new PQLoc[256]; 
 	private int size;
 	
+	// instance methods
+	
+	private PQLoc<K,E> castToLNode(Locator<K,E> p){
+		PQLoc<K,E> n;
+		try {
+			n = (PQLoc<K,E>) p;
+		} catch (ClassCastException e) {
+			throw new RuntimeException("This is not a Locator belonging to MyPriorityQueue"); 
+		}
+		if (n.creator == null) throw new RuntimeException("locator was allready deleted!");
+		if (n.creator != this) throw new RuntimeException("locator belongs to another PriorityQueue!");			
+		return n;
+	}
 	
 	@Override
 	public Locator<K, E> showMin() {
@@ -37,8 +52,10 @@ public class MyPriorityQueue<K extends Comparable<? super K>, E> implements
 
 	@Override
 	public Locator<K, E> removeMin() {
-		// TODO Auto-generated method stub
-		return null;
+		if (size==0) return null;
+		PQLoc<K,E> n = stor[1];
+		remove(n);
+		return n;
 	}
 
 	@Override
@@ -47,37 +64,69 @@ public class MyPriorityQueue<K extends Comparable<? super K>, E> implements
 		loc.elem = element;
 		loc.key=key;
 		stor[++size]=loc;
+		loc.pos = size;
 		upHeap(size);
 		return loc;
 	}
 
-	private void upHeap(int size2) {
-		// TODO Auto-generated method stub
+	private void upHeap(int i) {
+		while (i > 1 && stor[i].key.compareTo(stor[i/2].key) < 0){
+			swap(i,i/2);
+			i=i/2;
+		}
+	}
+
+	private void downHeap(int i) {
+		int left = i*2;
+		while (left <= size){
+			int right = left+1;
+			int cand = left;
+			if (right < size && 
+					stor[left].key.compareTo(stor[right].key) > 0) cand = right;
+			if (stor[i].key.compareTo(stor[cand].key) <= 0) break;
+			swap(i,cand);
+			i=cand;
+			left=i*2;
+		}
 		
+	}
+
+	private void swap(int i, int k) {
+		PQLoc<K,E> tmp = stor[i];
+		stor[i]=stor[k];
+		stor[k]=tmp;
+		// do'nt forget the 'pos' values:
+		stor[i].pos=i;
+		stor[k].pos=k;
 	}
 
 	@Override
 	public void remove(Locator<K, E> loc) {
-		// TODO Auto-generated method stub
-
+		PQLoc<K,E> n = castToLNode(loc);
+		PQLoc<K,E> n2 = stor[size];
+		swap(n.pos,size--);
+		upHeap(n2.pos);
+		downHeap(n2.pos);
+		n.creator = null;
 	}
 
 	@Override
 	public void replaceKey(Locator<K, E> loc, K newKey) {
-		// TODO Auto-generated method stub
-
+		PQLoc<K,E> n = castToLNode(loc);
+		n.key = newKey;
+		// only one of the following calls have an effect
+		upHeap(n.pos);
+		downHeap(n.pos);
 	}
 
 	@Override
 	public boolean isEmpty() {
-		// TODO Auto-generated method stub
-		return false;
+		return size == 0;
 	}
 
 	@Override
 	public int size() {
-		// TODO Auto-generated method stub
-		return 0;
+		return size;
 	}
 
 	public static void main(String[] args) {
@@ -85,8 +134,16 @@ public class MyPriorityQueue<K extends Comparable<? super K>, E> implements
 		pq.insert(7,"bla");
 		pq.insert(11,"bla");
 		pq.insert(5,"bla");
-		pq.insert(4,"bla");
-		System.out.println(pq.showMin().key());
+		Locator<Integer,String > l = pq.insert(14,"bla");
+		pq.insert(6,"bla");
+		pq.insert(20,"bla");
+		pq.remove(l);
+		System.out.println(pq.removeMin().key());
+		System.out.println(pq.removeMin().key());
+		System.out.println(pq.removeMin().key());
+		System.out.println(pq.removeMin().key());
+		System.out.println(pq.removeMin().key());
+//		System.out.println(pq.removeMin().key());
 	}
 
 }
