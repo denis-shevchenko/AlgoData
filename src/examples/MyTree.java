@@ -2,9 +2,6 @@ package examples;
 
 import java.util.Iterator;
 
-import javafx.geometry.Pos;
-import examples.MyLinkedList.LNode;
-import examples.MyTree2.TNode;
 
 public class MyTree<E> implements Tree<E> {
 
@@ -28,6 +25,8 @@ public class MyTree<E> implements Tree<E> {
 	
 	private TNode root;
 	private int size;
+	
+	// instance methods  
 	
 	private TNode castToTNode(Position<E> p){
 		TNode n;
