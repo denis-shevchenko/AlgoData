@@ -94,7 +94,8 @@ public class SortTest {
 	
 	static void heapSort(int [] a){
 		// make 'a' to be an max-heap: 
-		for (int i=1; i<a.length; i++) upHeap(a,i);
+//		for (int i=1; i<a.length; i++) upHeap(a,i);
+		for (int i=a.length/2;i>=0;i--) downHeap(a,i,a.length);
 		// System.out.println("max-heap? "+heapCheck(a));
 		for (int i = a.length-1; i>0; i--){
 			swap(a,0,i); // now a[i] is at its final position
@@ -124,7 +125,7 @@ public class SortTest {
 			int right = left+1;
 			// find the bigger child (if there are two)
 			if (right < len && a[right] > a[left]) cand = right;
-			if (a[i] >= a[cand]) break;
+			if (a[i] >= a[cand]) break; 
 			swap(a,i,cand);
 			i = cand;
 			left = i*2+1; 
