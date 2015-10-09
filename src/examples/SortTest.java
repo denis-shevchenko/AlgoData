@@ -3,6 +3,7 @@ package examples;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
+import java.util.ArrayList;
 import java.util.Random;
 
 
@@ -90,6 +91,50 @@ public class SortTest {
 		a[k]=tmp;
 		cnt++;
 	}
+	
+	static void heapSort(int [] a){
+		// make 'a' to be an max-heap: 
+		for (int i=1; i<a.length; i++) upHeap(a,i);
+		// System.out.println("max-heap? "+heapCheck(a));
+		for (int i = a.length-1; i>0; i--){
+			swap(a,0,i); // now a[i] is at its final position
+			downHeap(a, 0, i);
+		}
+	}
+
+	private static void upHeap(int[] a, int i) {
+		// assume a[0..i-1] is a max-heap, swap element
+		// at position i with its parent and so on
+		// until a[0..i] is a max-heap
+		int parent = (i-1)/2;
+		while (i>0 && a[parent] < a[i]){
+			swap(a,parent,i);
+			i = parent;
+			parent = (i-1)/2;
+		}
+	}
+
+	private static void downHeap(int[] a, int i, int len) {
+		// assume a [i..len-1] is a max-heap, but the element
+		// at position i possibly violates the heap condition.
+		// swap a[i] with its bigger child until a[i..len-1] is a heap.
+		int left = i*2+1;
+		while (left < len){
+			int cand = left;
+			int right = left+1;
+			// find the bigger child (if there are two)
+			if (right < len && a[right] > a[left]) cand = right;
+			if (a[i] >= a[cand]) break;
+			swap(a,i,cand);
+			i = cand;
+			left = i*2+1; 
+		} 		
+	}
+
+	private static boolean heapCheck(int [] a){
+		for (int i=1;i<a.length;i++) if (a[(i-1)/2]<a[i]) return false;
+		return true; // we have a correct max-heap
+	}
 
 	public static void main(String[] args) {
 		long t1=0,t2=0,te1=0,te2=0,eTime=0,time=0;
@@ -101,16 +146,20 @@ public class SortTest {
 		// new array
 		int [] a = new int[n];
 		// fill it randomly
-		for (int i=0;i<a.length ;i++) a[i]=rand.nextInt(n);
+		for (int i=0;i<a.length ;i++) {
+			a[i]=rand.nextInt(n);
+		}
 		cnt=0;  // for statistcs reasons
 		// get Time
 		te1=System.currentTimeMillis();
 		t1 = threadBean.getCurrentThreadCpuTime();
-		mergeSort(a);
+		heapSort(a);
+		// System.out.println("heap? "+heapCheck(a));
 		te2 = System.currentTimeMillis();
 		t2 = threadBean.getCurrentThreadCpuTime();
 		time=t2-t1;
 		eTime=te2-te1;
+		System.out.println("# elements: "+n);
 		System.out.println("CPU-Time usage: "+time/1000000.0+" ms");
 		System.out.println("elapsed time: "+eTime+" ms");
 		System.out.println("sorted? "+sortCheck(a));
