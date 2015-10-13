@@ -20,7 +20,9 @@ public interface OrderedDictionary<K extends Comparable<? super K>,E> {
 	/**
 	 * @param key
 	 * @return a Locator object with its key equal to 'key' or 
-	 * null if there is no such locator in this dictionary
+	 * null if there is no such locator in this dictionary (if there
+	 * are several equal keys all others can be retrieved with the 
+	 * 'next' method )
 	 */
 	public Locator<K,E> find(K key); // returns null if key not present
 

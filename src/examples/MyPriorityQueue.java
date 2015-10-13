@@ -1,6 +1,7 @@
 package examples;
 
 import java.util.Arrays;
+import java.util.Hashtable;
 
 public class MyPriorityQueue<K extends Comparable<? super K>, E> implements
 		PriorityQueue<K, E> {
@@ -149,11 +150,16 @@ public class MyPriorityQueue<K extends Comparable<? super K>, E> implements
 		System.out.println(pq.removeMin().key());
 //		System.out.println(pq.removeMin().key());
 		java.util.Random rand = new java.util.Random();
-		int n = 1000000;
+		int n = 10000000;
+		long start = System.nanoTime();
 		for (int i=0;i<n;i++) pq.insert(n-i,null);
 		for (int i=0;i<n;i++) {
-			System.out.println(pq.removeMin().key());
+			pq.removeMin();
 		}
+		long end = System.nanoTime();
+		System.out.println("elapsed time: "+(end-start)/1.e9+" s for "+n+" locators");
+		Hashtable z;
+		
 	}
 
 }
