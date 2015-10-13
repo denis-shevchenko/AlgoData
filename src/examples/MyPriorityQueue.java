@@ -1,5 +1,7 @@
 package examples;
 
+import java.util.Arrays;
+
 public class MyPriorityQueue<K extends Comparable<? super K>, E> implements
 		PriorityQueue<K, E> {
 	
@@ -61,6 +63,9 @@ public class MyPriorityQueue<K extends Comparable<? super K>, E> implements
 		PQLoc<K,E> loc = new PQLoc<>();
 		loc.elem = element;
 		loc.key=key;
+		if (size == stor.length-1) {
+			stor = Arrays.copyOf(stor,stor.length*2);
+		}
 		stor[++size]=loc;
 		loc.pos = size;
 		upHeap(size);
@@ -112,7 +117,7 @@ public class MyPriorityQueue<K extends Comparable<? super K>, E> implements
 	public void replaceKey(Locator<K, E> loc, K newKey) {
 		PQLoc<K,E> n = castToLNode(loc);
 		n.key = newKey;
-		// only one of the following calls have an effect
+		// only one of the following calls has an effect
 		upHeap(n.pos);
 		downHeap(n.pos);
 	}
@@ -136,12 +141,19 @@ public class MyPriorityQueue<K extends Comparable<? super K>, E> implements
 		pq.insert(6,"bla");
 		pq.insert(20,"bla");
 		pq.remove(l);
+		
 		System.out.println(pq.removeMin().key());
 		System.out.println(pq.removeMin().key());
 		System.out.println(pq.removeMin().key());
 		System.out.println(pq.removeMin().key());
 		System.out.println(pq.removeMin().key());
 //		System.out.println(pq.removeMin().key());
+		java.util.Random rand = new java.util.Random();
+		int n = 1000000;
+		for (int i=0;i<n;i++) pq.insert(n-i,null);
+		for (int i=0;i<n;i++) {
+			System.out.println(pq.removeMin().key());
+		}
 	}
 
 }
