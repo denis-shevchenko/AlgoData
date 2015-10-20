@@ -161,11 +161,143 @@ public class MyAVLTree<K extends Comparable<? super K>, E> implements
 
 	@Override
 	public void remove(Locator<K, E> loc) {
-		// TODO Auto-generated method stub
-		
+		AVLNode n = checkAndCast(loc);
+		AVLNode w = null; // is the node which replaced the one we removed really
+
+		if (! n.left.isExternal() && ! n.right.isExternal()) {
+			// we find the most left node in the right subtree
+			AVLNode r = n.right;
+			while ( ! r.left.isExternal()) r = r.left;
+			w = removeAboveExternal(r);
+			// now we have to replace n by r
+			r.parent = n.parent;
+			if (n==root) root = r;
+			else {
+				if (n.isLeftChild()) n.parent.left = r;
+				else  n.parent.right = r;
+			}
+			r.height = n.height;
+			r.left = n.left;
+			r.right = n.right;
+			r.right.parent = r;
+			r.left.parent = r;
+			
+		}
+		else w = removeAboveExternal(n);
+		n.creator = null;
+		size--;
+		adjustHeightAboveAndRebalance(w);
 	}
 
+	private AVLNode removeAboveExternal(AVLNode r) {
+		// remove r and return the childnode which takes the 
+		// position of r
+		return null;
+	}
 
+	private AVLNode restructure(AVLNode n) {
+		// cnt++;
+		// n is unbalanced
+		// returns the node that takes the position of n
+		AVLNode p=n.parent,z=n,x=null,y=null,
+		a=null,b=null,c=null, t1=null,t2=null; 
+		// t0 and t3 never change their parent, 
+		// that's why we don't need them 
+		if (z.left.height > z.right.height){
+			//   z
+			//  /
+			// y
+			c=z;
+			y=z.left;
+			if (y.left.height >=y.right.height){
+				// in case we have two equal branches
+				// concidering the length we take alway s the single
+				// rotation
+				//     z
+				//    /
+				//   y
+				//  /
+				// x
+				x=y.left;
+				t1=x.right;
+				t2=y.right;
+				b=y;
+				a=x;
+			}
+			else {
+				//     z
+				//    /
+				//   y
+				//   \  
+				//    x
+				x=y.right;
+				t1=x.left;
+				t2=x.right;
+				a=y;
+				b=x;
+			}
+		}
+		else{
+			// z
+			//   \
+			//    y
+			a=z;
+			y=z.right;
+			if (y.right.height >= y.left.height){
+				//  z
+				//   \
+				//    y
+				//     \  
+				//      x
+				x=y.right;
+				b=y;
+				c=x;
+				t1=y.left;
+				t2=x.left;
+			}
+			else {
+				//  z
+				//   \
+				//    y
+				//    /  
+				//   x
+				x=y.left;
+				b=x;
+				c=y;
+				t1=x.left;
+				t2=x.right;
+			}
+		}		
+		// umhaengen
+		b.parent = p;
+		if (p != null){
+			if (p.left == z) {
+				p.left=b;
+			}
+			else p.right=b;
+		}
+		else {
+			root=b;
+		}
+		b.right = c;
+		b.left = a;
+		// und umgekehrt
+		a.parent = b;
+		c.parent = b;
+
+		// subtrees:
+		a.right = t1;
+		t1.parent = a;
+		c.left = t2;
+		t2.parent = c;
+		
+		
+		a.height = Math.max(a.left.height, a.right.height)+1;
+		c.height = Math.max(c.left.height, c.right.height)+1;
+		// now we can calculate the height of b
+		b.height = Math.max(b.left.height, b.right.height)+1;
+		return b;
+	}
 
 
 	@Override
