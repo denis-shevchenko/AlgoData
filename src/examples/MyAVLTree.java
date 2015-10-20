@@ -151,8 +151,10 @@ public class MyAVLTree<K extends Comparable<? super K>, E> implements
 		n = n.parent;
 		while (n != null ){
 			int newHeight = Math.max(n.left.height,n.right.height)+1;
-			if (newHeight == n.height) break;
+			boolean balanced = Math.abs(n.left.height-n.right.height)<2;
+			if (balanced && newHeight == n.height) break;
 			n.height = newHeight;
+			if ( ! balanced) n = restructure(n);				
 			n = n.parent;
 		}
 	}
@@ -196,7 +198,7 @@ public class MyAVLTree<K extends Comparable<? super K>, E> implements
 	}
 
 	private AVLNode restructure(AVLNode n) {
-		// cnt++;
+
 		// n is unbalanced
 		// returns the node that takes the position of n
 		AVLNode p=n.parent,z=n,x=null,y=null,
@@ -410,8 +412,9 @@ public class MyAVLTree<K extends Comparable<? super K>, E> implements
 		if (n.right.parent != n) throw new RuntimeException("chaining incorrec"+n.key);
 		if (Math.max(n.left.height,n.right.height)+1!=n.height)
 			throw new RuntimeException("Height wrong"+n.key);
-		if (n.left.key !=null &&  n.left.key.compareTo(n.key)>0) throw new RuntimeException("order wrong"+n.key); 
-		if (n.right.key !=null &&  n.right.key.compareTo(n.key)<0) throw new RuntimeException("order wrong"+n.key); 
+		if (n.left.key !=null &&  n.left.key.compareTo(n.key)>0) throw new RuntimeException("order wrong "+n.key); 
+		if (n.right.key !=null &&  n.right.key.compareTo(n.key)<0) throw new RuntimeException("order wrong "+n.key);
+		if (Math.abs(n.left.height-n.right.height)> 1) throw new RuntimeException("unbalanced "+n.key);
 	}
 
 
