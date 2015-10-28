@@ -127,8 +127,6 @@ public class MyAVLTree<K extends Comparable<? super K>, E> implements
 	}
 
 
-
-
 	@Override
 	public Locator<K, E> insert(K key, E o) {
 		AVLNode n = root;
@@ -164,12 +162,20 @@ public class MyAVLTree<K extends Comparable<? super K>, E> implements
 	@Override
 	public void remove(Locator<K, E> loc) {
 		AVLNode n = checkAndCast(loc);
-		AVLNode w = null; // is the node which replaced the one we removed really
+		AVLNode w;  	// is the node which replaced 
+						// the one we removed really
 
 		if (! n.left.isExternal() && ! n.right.isExternal()) {
 			// we find the most left node in the right subtree
-			AVLNode r = n.right;
-			while ( ! r.left.isExternal()) r = r.left;
+			AVLNode r;
+			if (n.right.height > n.left.height){
+				r = n.right;
+				while ( ! r.left.isExternal()) r = r.left;
+			}
+			else {
+				r=n.left;
+				while ( ! r.right.isExternal()) r = r.right;
+			}
 			w = removeAboveExternal(r);
 			// now we have to replace n by r
 			r.parent = n.parent;
@@ -191,10 +197,23 @@ public class MyAVLTree<K extends Comparable<? super K>, E> implements
 		adjustHeightAboveAndRebalance(w);
 	}
 
-	private AVLNode removeAboveExternal(AVLNode r) {
-		// remove r and return the childnode which takes the 
-		// position of r
-		return null;
+	private AVLNode removeAboveExternal(AVLNode n) {
+		AVLNode w;
+		if (n.left.isExternal()){
+			w = n.right;
+			w.parent = n.parent;
+			if (n.isLeftChild()) w.parent.left = w;
+			else if (n.isRightChild()) w.parent.right = w;
+			else root = w;
+		}
+		else {
+			w = n.left;
+			w.parent = n.parent;
+			if (n.isLeftChild()) w.parent.left = w;
+			else if (n.isRightChild()) w.parent.right = w;
+			else  root = w;
+		}
+		return w;
 	}
 
 	private AVLNode restructure(AVLNode n) {
@@ -304,16 +323,43 @@ public class MyAVLTree<K extends Comparable<? super K>, E> implements
 
 	@Override
 	public Locator<K, E> closestBefore(K key) {
-		// TODO Auto-generated method stub
-		return null;
+		if (size==0) return null;
+		AVLNode n = root;
+		AVLNode found = null;
+		while ( ! n.isExternal()){
+			int comp = key.compareTo(n.key);
+			if (comp < 0) n = n.left;
+			else if (comp > 0) n=n.right;
+			else {
+				found = n;
+				n=n.left;
+			}			
+		}
+		if (found != null) return previous(found);
+		// we are at a external position
+		if (n.isRightChild()) return n.parent;
+		return previous(n.parent);
 	}
 
 
 
 	@Override
 	public Locator<K, E> closestAfter(K key) {
-		// TODO Auto-generated method stub
-		return null;
+		if (size==0) return null;
+		AVLNode n = root;
+		AVLNode found = null;
+		while ( ! n.isExternal()){
+			int comp = key.compareTo(n.key);
+			if (comp > 0) n = n.right;
+			else if (comp < 0) n=n.left;
+			else {
+				found = n;
+				n=n.right;
+			}			
+		}
+		if (found != null) return next(found);
+		if (n.isLeftChild()) return n.parent;
+		return next(n.parent);
 	}
 
 
@@ -336,8 +382,16 @@ public class MyAVLTree<K extends Comparable<? super K>, E> implements
 
 	@Override
 	public Locator<K, E> previous(Locator<K, E> loc) {
-		// TODO Auto-generated method stub
-		return null;
+		AVLNode n = checkAndCast(loc);
+		if (n.left.isExternal()){
+			while(n.isLeftChild()) n=n.parent;
+			n=n.parent;
+		}
+		else {
+			n=n.left;
+			while (! n.right.isExternal()) n=n.right;
+		}
+		return n;
 	}
 
 
@@ -345,8 +399,10 @@ public class MyAVLTree<K extends Comparable<? super K>, E> implements
 
 	@Override
 	public Locator<K, E> min() {
-		// TODO Auto-generated method stub
-		return null;
+		if (size == 0) return null;
+		AVLNode n = root;
+		while (! n.left.isExternal()) n=n.left;
+		return n;
 	}
 
 
@@ -354,8 +410,10 @@ public class MyAVLTree<K extends Comparable<? super K>, E> implements
 
 	@Override
 	public Locator<K, E> max() {
-		// TODO Auto-generated method stub
-		return null;
+		if (size == 0) return null;
+		AVLNode n = root;
+		while (! n.right.isExternal()) n=n.right;
+		return n;
 	}
 
 
@@ -363,8 +421,29 @@ public class MyAVLTree<K extends Comparable<? super K>, E> implements
 
 	@Override
 	public Iterator<Locator<K, E>> sortedLocators() {
-		// TODO Auto-generated method stub
-		return null;
+		return new Iterator<Locator<K,E>>() {
+			AVLNode current = (AVLNode)min();
+			
+			@Override
+			public boolean hasNext() {
+				return current == null;
+			}
+
+			@Override
+			public Locator<K, E> next() {
+				AVLNode ret = current; // this is the next node
+				//  by one node:
+				if (current.right.isExternal()){
+					while(current.isRightChild()) current=current.parent;
+					current=current.parent;
+				}
+				else {
+					current=current.right;
+					while (! current.left.isExternal()) current=current.left;
+				}
+				return ret;
+			}
+		};
 	}
 	
 	public void print(){
@@ -401,6 +480,7 @@ public class MyAVLTree<K extends Comparable<? super K>, E> implements
 	}
 
 	public void test(){
+		if (root.parent != null) throw new RuntimeException("root has a parent: "+root.parent.key);
 		test(root);
 	}
 
@@ -415,42 +495,45 @@ public class MyAVLTree<K extends Comparable<? super K>, E> implements
 		if (n.left.key !=null &&  n.left.key.compareTo(n.key)>0) throw new RuntimeException("order wrong "+n.key); 
 		if (n.right.key !=null &&  n.right.key.compareTo(n.key)<0) throw new RuntimeException("order wrong "+n.key);
 		if (Math.abs(n.left.height-n.right.height)> 1) throw new RuntimeException("unbalanced "+n.key);
+		if (n.creator != this) throw new RuntimeException("invalid node: "+n.key);
 	}
-
 
 
 	public static void main(String[] argv){
 		MyAVLTree<Integer, String> t = new MyAVLTree<>();
 		Random rand = new Random();
-//		t.insert(6, "e 6.1");
-//		t.insert(10, "e 10");
-//		t.insert(7, "e 7");
-//		t.insert(6, "e 6.2 ");
-//		t.insert(3, "e 3");
-//		Locator loc = t.insert(1, "e 1");		
-//		t.insert(6, "e 6.3 ");
-//		t.insert(4, "e 4");
-//		t.insert(11, "e 11");
-//		t.print();
-//		while (loc != null) {
-//			System.out.println(loc.key());
-//			loc = t.next(loc);
+		t.insert(6, "e 6.1");
+		t.insert(10, "e 10");
+		t.insert(7, "e 7");
+		t.insert(7, "e 7.2");
+		t.insert(6, "e 6.2 ");
+		t.insert(3, "e 3");
+		Locator loc = t.insert(1, "e 1");		
+		t.insert(6, "e 6.3 ");
+		t.insert(4, "e 4");
+		t.insert(11, "e 11");
+		t.print();
+		// loc = t.closestBefore(1);
+		System.out.println(t.previous(t.closestBefore(2)));
 //		}
 //		System.out.println(t.find(6).element());
-		int n  = 10;
-		Locator<Integer,String>[] locs = new Locator[n];
-		long time1 = System.nanoTime();
-		for (int i=0;i<n;i++) {
-			 locs[i]=t.insert(rand.nextInt(n),"e"+i);
-			//locs[i]=t.insert(i, "bla");
-		}
-		t.test();
-		// for (int i= 0; i<n/2; i++ ) t.remove(locs[i]);
-		long time2 = System.nanoTime(); 
-		System.out.println("ms used: "+(time2-time1)/1e6);
-		System.out.println(t.root.height);
+//		int n  = 1000000;
+//		Locator<Integer,String>[] locs = new Locator[n];
+//		long time1 = System.nanoTime();
+//		for (int i=0;i<n;i++) {
+//			locs[i]=t.insert(i,"");
+//			//locs[i]=t.insert(i, "bla");
+//		}
+//		// t.test();
+//		for (int i= 0; i<n; i++ ) {
+//			t.remove(locs[i]);
+//			// t.test();
+//		}
+//		long time2 = System.nanoTime(); 
+//		System.out.println("ms used: "+(time2-time1)/1e6);
+//		System.out.println(t.root.height);
 		// System.out.println((t.find(13).element()));
-		 t.print();
+		//  t.print();
 //		Locator<Integer,String> 
 //		loc = t.min();
 //		while (loc != null){
