@@ -42,6 +42,64 @@ public class SortTest {
 		merge(a,from,mid,to);
 	}
 
+	/**
+	 * Wrapper which calls the recursive version of the 
+	 * quick sort program
+	 * @param a the int array to be sorted
+	 */
+	public static void quickSort(int [] a){
+		qSort(a,0,a.length-1);
+	}
+
+	/**
+	 * recursive version of quick sort (sorts 
+	 * the range a[from..to] of the int array 'a')
+	 * @param a 
+	 * @param from 
+	 * @param to
+	 */
+	private static void qSort(int []a, int from, int to){
+		if (from >= to) return; // nothing to do if sequence has length 1 or less
+		int piv = partition(a,from,to);
+		// now a[to..piv-1] <= a[piv] and 
+		// a[piv+1..to]>=a[piv]
+		qSort(a,from,piv-1);
+		qSort(a,piv+1,to);
+	}
+	
+	/**
+	 * retuns piv and partitions the
+	 * range a[from..to] such that all of the elements 
+	 * in the range a[from..piv-1] are <= a[piv] and
+	 * all elements in the range a[piv+1..to] are  >= a[piv]
+	 * @param a
+	 * @param from
+	 * @param to
+	 * @return the position 'piv' of the pivot
+	 */
+	private static int partition(int []a, int from, int to){
+		if (from==to) return from;
+		swap(a,rand.nextInt(to-from)+from,to);
+		int pivot = a[to];
+		int left = from-1;
+		int right = to;
+		while(true){
+			while(a[++left]  < pivot); // stops at a swap candidate 
+			while(a[--right] > pivot)
+			{
+				if (right==from) break; // break right decrementing when we reach from
+			}
+			// finished?
+			if (right <= left) break;
+			// no 
+			swap(a,left,right);
+		}
+		// final swap
+		swap(a,to,left);
+		return left;      // return the final position of the pivot (to be changed!)
+	}
+	
+	
 	private static void merge(int[] a, int from, int mid, int to) {
 		// merge the sections a[from..mid] and a[mid+1..to] into
 		// b[from..to] and copy back
@@ -139,7 +197,7 @@ public class SortTest {
 
 	public static void main(String[] args) {
 		long t1=0,t2=0,te1=0,te2=0,eTime=0,time=0;
-		int n = 10000000;
+		int n = 1000000;
 		// we need a random generator
 		Random rand=new Random();
 		//rand.setSeed(54326346); // initialize always in the same state
@@ -148,21 +206,21 @@ public class SortTest {
 		int [] a = new int[n];
 		// fill it randomly
 		for (int i=0;i<a.length ;i++) {
-			a[i]=rand.nextInt(n);
+			a[i]=1;//rand.nextInt(n);
 		}
 		cnt=0;  // for statistcs reasons
 		// get Time
-		te1=System.currentTimeMillis();
+		te1=System.nanoTime();
 		t1 = threadBean.getCurrentThreadCpuTime();
-		mergeSort(a);
+		quickSort(a);
 		// System.out.println("heap? "+heapCheck(a));
-		te2 = System.currentTimeMillis();
+		te2 = System.nanoTime();
 		t2 = threadBean.getCurrentThreadCpuTime();
 		time=t2-t1;
 		eTime=te2-te1;
 		System.out.println("# elements: "+n);
 		System.out.println("CPU-Time usage: "+time/1000000.0+" ms");
-		System.out.println("elapsed time: "+eTime+" ms");
+		System.out.println("elapsed time: "+eTime/1e6+" ms");
 		System.out.println("sorted? "+sortCheck(a));
 		System.out.println("swap operation needed: "+cnt);
 	}
