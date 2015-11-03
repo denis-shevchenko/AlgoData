@@ -143,10 +143,44 @@ public class MySkipList<K extends Comparable<? super K>, E> implements
 		// we take the rightmost Locator with valid key
 		while (pos.next.key.compareTo(key)== 0) pos=pos.next;		
 		// now we want to insert a node at the position pos.next:		
-		//..............
-
+		// make a new node:		
+		SLNode nNew = new SLNode();
+		nNew.key = key;
+		nNew.elem = o;
+		
+		// insert at pos.next
+		nNew.next = pos.next;
+		nNew.prev = pos;
+		// backwards chaining:
+		nNew.next.prev=nNew;
+		nNew.prev.next=nNew;
+		
+		// build index:
+	
+		SLNode lastIndex = nNew;
+		while (rand.nextDouble() < p){
+			while (pos.above==null) pos = pos.prev;
+			pos = pos.above;
+			// create a new index and insert it after pos:
+			SLNode index = new SLNode();
+			index.key = key;			
+			// insert:
+			// horizontal chaining:
+			index.prev = pos;
+			index.next = pos.next;
+			index.next.prev = index;
+			index.prev.next = index;
+			// vertical chaining:
+			index.below = lastIndex;
+			lastIndex.above = index;		
+			// increment  
+			lastIndex=index;  		
+			// if pos is topLeft we have to expand by one index level
+			if (pos == topLeft) expand();
+		
+		}
 		size++;
-		return null;
+		return nNew;
 	}
 
 	private void expand(){
@@ -367,15 +401,15 @@ public class MySkipList<K extends Comparable<? super K>, E> implements
 	public static void main(String[] args) {
 		MySkipList<Integer, String> sl = new MySkipList<>(Integer.MIN_VALUE,Integer.MAX_VALUE);
 		Random rand = new Random();
-		int n  = 100;
+		int n  = 1000000;
 		Locator<Integer,String>[] locs = new Locator[n];
 		long time1 = System.currentTimeMillis();
 		for (int i=0;i<n;i++) {
 			locs[i]=sl.insert(rand.nextInt(n),""+i); 
 		}
-//		for (int i=0;i<n;i++) {
-//			sl.remove(locs[i]); 
-//		}
+		for (int i=0;i<n/2;i++) {
+			sl.remove(locs[i]); 
+		}
 		Locator<Integer,String>[] ll = sl.findAll(33);
 		for (int i=0;i<ll.length;i++)System.out.println(ll[i].key());
 		long time2 = System.currentTimeMillis();
@@ -386,7 +420,7 @@ public class MySkipList<K extends Comparable<? super K>, E> implements
 //			Locator<Integer, String> loc = it.next();
 //			System.out.println(loc.key()+" element: "+loc.element());
 //		}
-		sl.print();
+		// sl.print();
 //		sl.remove(locs[15]);
 //		sl.print();
 //		Locator<Integer,String> loc = sl.closestBefore(83);
