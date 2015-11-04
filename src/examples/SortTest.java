@@ -43,19 +43,7 @@ public class SortTest {
 	}
 
 	
-	public static void qSelect(int [] a, int rank){
-		// puts the elements with rank 0..rank into the 
-		// range a[0..rank] (i.e all elements a[rank+1..a.length-1] are 
-		// >= to all elements in a[0..rank].
-		qSelect(a,0,a.length-1,rank);
-	}
-	
-	private static void qSelect(int [] a, int from, int to , int rank){
-		int piv = partition(a,from,to);
-		if (piv==rank) return;
-		if (piv > rank) qSelect(a,from,piv-1,rank);
-		else qSelect(a,piv+1,to,rank);	
-	}
+
 	/**
 	 * Wrapper which calls the recursive version of the 
 	 * quick sort program
@@ -95,22 +83,8 @@ public class SortTest {
 		if (from==to) return from;
 		swap(a,rand.nextInt(to-from)+from,to);
 		int pivot = a[to];
-		int left = from-1;
-		int right = to;
-		while(true){
-			while(a[++left]  < pivot); // stops at a swap candidate 
-			while(a[--right] > pivot)
-			{
-				if (right==from) break; // break right decrementing when we reach from
-			}
-			// finished?
-			if (right <= left) break;
-			// no 
-			swap(a,left,right);
-		}
-		// final swap
-		swap(a,to,left);
-		return left;      // return the final position of the pivot (to be changed!)
+		// ....
+		return 0;      // return the final position of the pivot (to be changed!)
 	}
 	
 	
@@ -227,15 +201,12 @@ public class SortTest {
 		// get Time
 		te1=System.nanoTime();
 		t1 = threadBean.getCurrentThreadCpuTime();
-		qSelect(a,100);
+		quickSort(a);
 		// System.out.println("heap? "+heapCheck(a));
 		te2 = System.nanoTime();
 		t2 = threadBean.getCurrentThreadCpuTime();
 		time=t2-t1;
 		eTime=te2-te1;
-		for (int i=0;i<100;i++) System.out.println(a[i]);
-		quickSort(a);
-		for (int i=0;i<100;i++) System.out.println(a[i]);
 		System.out.println("# elements: "+n);
 		System.out.println("CPU-Time usage: "+time/1000000.0+" ms");
 		System.out.println("elapsed time: "+eTime/1e6+" ms");
