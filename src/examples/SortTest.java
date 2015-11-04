@@ -42,6 +42,20 @@ public class SortTest {
 		merge(a,from,mid,to);
 	}
 
+	
+	public static void qSelect(int [] a, int rank){
+		// puts the elements with rank 0..rank into the 
+		// range a[0..rank] (i.e all elements a[rank+1..a.length-1] are 
+		// >= to all elements in a[0..rank].
+		qSelect(a,0,a.length-1,rank);
+	}
+	
+	private static void qSelect(int [] a, int from, int to , int rank){
+		int piv = partition(a,from,to);
+		if (piv==rank) return;
+		if (piv > rank) qSelect(a,from,piv-1,rank);
+		else qSelect(a,piv+1,to,rank);	
+	}
 	/**
 	 * Wrapper which calls the recursive version of the 
 	 * quick sort program
@@ -190,6 +204,7 @@ public class SortTest {
 		} 		
 	}
 
+	
 	private static boolean heapCheck(int [] a){
 		for (int i=1;i<a.length;i++) if (a[(i-1)/2]<a[i]) return false;
 		return true; // we have a correct max-heap
@@ -197,7 +212,7 @@ public class SortTest {
 
 	public static void main(String[] args) {
 		long t1=0,t2=0,te1=0,te2=0,eTime=0,time=0;
-		int n = 1000000;
+		int n = 10000000;
 		// we need a random generator
 		Random rand=new Random();
 		//rand.setSeed(54326346); // initialize always in the same state
@@ -206,18 +221,21 @@ public class SortTest {
 		int [] a = new int[n];
 		// fill it randomly
 		for (int i=0;i<a.length ;i++) {
-			a[i]=1;//rand.nextInt(n);
+			a[i]=rand.nextInt(n);
 		}
 		cnt=0;  // for statistcs reasons
 		// get Time
 		te1=System.nanoTime();
 		t1 = threadBean.getCurrentThreadCpuTime();
-		quickSort(a);
+		qSelect(a,100);
 		// System.out.println("heap? "+heapCheck(a));
 		te2 = System.nanoTime();
 		t2 = threadBean.getCurrentThreadCpuTime();
 		time=t2-t1;
 		eTime=te2-te1;
+		for (int i=0;i<100;i++) System.out.println(a[i]);
+		quickSort(a);
+		for (int i=0;i<100;i++) System.out.println(a[i]);
 		System.out.println("# elements: "+n);
 		System.out.println("CPU-Time usage: "+time/1000000.0+" ms");
 		System.out.println("elapsed time: "+eTime/1e6+" ms");
