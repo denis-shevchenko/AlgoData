@@ -41,8 +41,30 @@ public class SortTest {
 		mSort(a,mid+1,to);
 		merge(a,from,mid,to);
 	}
-
 	
+	
+	/**
+	 * On return the array 'a' will be chanched such that 
+	 * the  condition helds:
+	 * a[0..rank-1] <= a[rank] <= a[rank+1..a.length-1]
+	 * @param a 
+	 * @param rank
+	 */
+	public static void quickSelect(int [] a , int rank){
+		// on return the following condition helds:
+		// a[0..rank-1] <= a[rank] <= a[rank+1..a.length-1]
+		qSelect(a,0, a.length-1,rank);
+	}
+	
+
+	private static void qSelect(int[] a, int from, int to, int rank) {
+		// on return the following condition helds:
+		// a[from..rank-1] <=  a[rank] <= a[rank+1..to]
+		int piv = partition(a,from, to);
+		if (piv==rank) return;
+		if (rank > piv) qSelect(a,piv+1,to,rank);
+		else qSelect(a,from,piv-1,rank);
+	}
 
 	/**
 	 * Wrapper which calls the recursive version of the 
@@ -81,10 +103,18 @@ public class SortTest {
 	 */
 	private static int partition(int []a, int from, int to){
 		if (from==to) return from;
-		swap(a,rand.nextInt(to-from)+from,to);
+		swap(a,rand.nextInt(to-from)+from,to); // chooses a random pivot
 		int pivot = a[to];
-		// ....
-		return 0;      // return the final position of the pivot (to be changed!)
+		int left = from-1;
+		int right = to;
+		while (true){
+			while(a[++left]< pivot); // a[left] is now a candidate to swap
+			while(a[--right] > pivot && right>from); 
+			if (left >= right) break;
+			swap(a,left,right); 
+		}
+		swap(a,left,to);
+		return left;      // return the final position of the pivot (to be changed!)
 	}
 	
 	
@@ -186,7 +216,7 @@ public class SortTest {
 
 	public static void main(String[] args) {
 		long t1=0,t2=0,te1=0,te2=0,eTime=0,time=0;
-		int n = 10000000;
+		int n = 100000000;
 		// we need a random generator
 		Random rand=new Random();
 		//rand.setSeed(54326346); // initialize always in the same state
@@ -195,13 +225,19 @@ public class SortTest {
 		int [] a = new int[n];
 		// fill it randomly
 		for (int i=0;i<a.length ;i++) {
-			a[i]=rand.nextInt(n);
+			a[i]=i;// rand.nextInt(n);
 		}
+		for (int i=0;i<a.length ;i++) {
+			swap(a,i,rand.nextInt(n-1));
+		}
+		
 		cnt=0;  // for statistcs reasons
 		// get Time
 		te1=System.nanoTime();
 		t1 = threadBean.getCurrentThreadCpuTime();
-		quickSort(a);
+		quickSelect(a,100);
+		for (int i=0;i<=100;i++) System.out.println(a[i]);
+		
 		// System.out.println("heap? "+heapCheck(a));
 		te2 = System.nanoTime();
 		t2 = threadBean.getCurrentThreadCpuTime();
