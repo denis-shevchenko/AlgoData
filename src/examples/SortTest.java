@@ -216,9 +216,9 @@ public class SortTest {
 
 	public static void main(String[] args) {
 		long t1=0,t2=0,te1=0,te2=0,eTime=0,time=0;
-		int n = 1000000;
+		int n = 50000000;
 		// we need a random generator
-		Random rand=new Random();
+		Random rand=new Random(Integer.MAX_VALUE);
 		//rand.setSeed(54326346); // initialize always in the same state
 		ThreadMXBean threadBean = ManagementFactory.getThreadMXBean();	
 		// new array
