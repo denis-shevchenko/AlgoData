@@ -216,7 +216,7 @@ public class SortTest {
 
 	public static void main(String[] args) {
 		long t1=0,t2=0,te1=0,te2=0,eTime=0,time=0;
-		int n = 100000000;
+		int n = 1000000;
 		// we need a random generator
 		Random rand=new Random();
 		//rand.setSeed(54326346); // initialize always in the same state
@@ -225,7 +225,7 @@ public class SortTest {
 		int [] a = new int[n];
 		// fill it randomly
 		for (int i=0;i<a.length ;i++) {
-			a[i]=i;// rand.nextInt(n);
+			a[i]=rand.nextInt(n);
 		}
 		for (int i=0;i<a.length ;i++) {
 			swap(a,i,rand.nextInt(n-1));
@@ -235,8 +235,7 @@ public class SortTest {
 		// get Time
 		te1=System.nanoTime();
 		t1 = threadBean.getCurrentThreadCpuTime();
-		quickSelect(a,100);
-		for (int i=0;i<=100;i++) System.out.println(a[i]);
+		quickSort(a);
 		
 		// System.out.println("heap? "+heapCheck(a));
 		te2 = System.nanoTime();
