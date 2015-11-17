@@ -1,6 +1,7 @@
 package graphLib;
 
 import java.io.Serializable;
+import examples.Position;
 
 /**
  * Vertices of a graph. The vertex object can be retrieved with 

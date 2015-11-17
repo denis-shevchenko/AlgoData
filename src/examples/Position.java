@@ -2,6 +2,9 @@
  * 
  */
 package examples;
+
+import java.io.Serializable;
+
 /**
  * @author ps
  * Position ojects give the user immediate access to an object stored in a
@@ -10,7 +13,7 @@ package examples;
  *
  * @param <E> the type of the objects returned by a position 
  */
-public interface Position<E> {
+public interface Position<E> extends Serializable{
 	/**
 	 * @return the object (of type E) stored at this position;
 	 */

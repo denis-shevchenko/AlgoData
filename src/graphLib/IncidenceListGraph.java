@@ -1,6 +1,7 @@
 package graphLib;
 
 import java.io.Serializable;
+import examples.*;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;

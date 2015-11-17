@@ -1,6 +1,7 @@
 package graphLib;
 
 import java.io.Serializable;
+import examples.Position;
 
 /**
  * Edges of a graph. The edge object can be retrieved with 
