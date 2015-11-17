@@ -1,5 +1,6 @@
 package examples;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Hashtable;
 
@@ -7,7 +8,8 @@ public class MyPriorityQueue<K extends Comparable<? super K>, E> implements
 		PriorityQueue<K, E> {
 	
 	// auxiliary class for the locators
-	class PQLoc<K1 extends Comparable<? super K1>,E1> implements Locator<K1 , E1>{
+	class PQLoc<K1 extends Comparable<? super K1>,E1> 
+		implements Locator<K1 , E1>{
 		
 		E1 elem;
 		K1 key;

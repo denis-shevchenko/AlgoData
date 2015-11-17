@@ -1,4 +1,7 @@
 package examples;
+
+import java.io.Serializable;
+
 /**
  * @author ps
  *
@@ -11,7 +14,7 @@ package examples;
  * @param <K> The type of the key (has to extend a comparable class) 
  * @param <E> The type of the elements stored
  */
-public interface PriorityQueue<K extends Comparable<? super K>,E> {
+public interface PriorityQueue<K extends Comparable<? super K>,E> extends Serializable{
 
 
 		/**
