@@ -9,29 +9,128 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Random;
 
 
 public class GraphExamples<V,E> {
 
-	
+
+	@Algorithm(vertex=true,vertex2=true)
+	public void findPath(Graph<V,E> g, Vertex<V> v,Vertex<V> v2, GraphTool<V,E> t) {
+		LinkedList<Vertex<V>> list = new LinkedList<>();
+		v.set(Attribute.color,Color.BLUE);
+		v2.set(Attribute.color,Color.RED);
+		v.set(Attribute.VISITED,null);
+		t.show(g);
+		list.addLast(v);
+		while (! list.isEmpty()){		
+			Vertex w = list.removeFirst();
+			Iterator<Edge<E>> it = g.incidentEdges(w); 
+			while (it.hasNext()){
+				Edge e = it.next();
+				Vertex n = g.opposite(e, w);
+				if ( ! n.has(Attribute.VISITED)){
+					n.set(Attribute.VISITED,null);
+					n.set(Attribute.DISCOVERY,e);
+					if (n==v2) break;
+					list.addLast(n);
+				}
+
+			}
+			if (v2.has(Attribute.DISCOVERY)) break;		
+		}
+		while (v2.has(Attribute.DISCOVERY)){
+			Edge e = (Edge) v2.get(Attribute.DISCOVERY);
+			e.set(Attribute.color,Color.green);
+			t.show(g);
+			v2 = g.opposite(e, v2);
+		}
+	}
+
 
 	
+	
 	/**
-	 * vists all (recursively) vertices starting with 'v' which
-	 * can be reached
+	 * visits all vertices starting with 'v' 
+	 * using a breadth first search
+	 * 
 	 * @param v
 	 */
 	@Algorithm(vertex=true)
-	public void visitDFS(Graph<V,E> g,Vertex<V> v, GraphTool<V,E> t) {
+	public void visitBFS(Graph<V,E> g, Vertex<V> v, GraphTool<V,E> t) {
+		LinkedList<Vertex<V>> list = new LinkedList<>();
+		v.set(Attribute.color,Color.BLUE);
 		v.set(Attribute.VISITED,null);
-		v.set(Attribute.color,Color.red);
+		list.addLast(v);
+		t.show(g);
+		while (! list.isEmpty()){		
+			Vertex w = list.removeFirst();
+			Iterator<Edge<E>> it = g.incidentEdges(w); 
+			while (it.hasNext()){
+				Edge e = it.next();
+				Vertex n = g.opposite(e, w);
+				if ( ! n.has(Attribute.VISITED)){
+					e.set(Attribute.color,Color.GREEN);
+					n.set(Attribute.color,Color.GREEN);
+					n.set(Attribute.VISITED,null);
+					n.set(Attribute.DISCOVERY,e);	// for path finding!
+					n.set(v,e); // set the gatway-edge wich leads to 'v'
+					list.addLast(n);
+					t.show(g);
+				}
+			}
+		}
+	}
+
+	/**
+	 * visits by a depth-first-search  all reachable vertices starting with 'v'
+	 * @param v
+	 */
+	@Algorithm(vertex=true)
+	public void visitDFS2(Graph<V,E> g, Vertex<V> v, GraphTool<V,E> t) {
+		LinkedList<Vertex<V>> list = new LinkedList<>();
+		v.set(Attribute.color,Color.BLUE);
+		v.set(Attribute.DISCOVERY,null);
+		list.addLast(v);
+		t.show(g);
+		while (! list.isEmpty()){		
+			Vertex w = list.removeLast();		
+			if ( ! w.has(Attribute.VISITED)){
+				Edge de = (Edge) (w.get(Attribute.DISCOVERY));
+				if (de!=null) de.set(Attribute.color,Color.green);
+				w.set(Attribute.VISITED,null);
+				w.set(Attribute.color,Color.GREEN);
+				t.show(g);
+				Iterator<Edge<E>> it = g.incidentEdges(w); 
+				while (it.hasNext()){
+					Edge e = it.next();
+					Vertex n = g.opposite(e, w);
+					if (! n.has(Attribute.VISITED)){
+						n.set(Attribute.DISCOVERY,e);
+						list.addLast(n);
+					}
+
+				}
+			}			
+		}
+	}
+
+
+	/**
+	 * visits (recursively) all reachable vertices starting with 'v'
+	 * @param v
+	 */
+	@Algorithm(vertex=true)
+	public void visitDFS(Graph<V,E> g, Vertex<V> v, GraphTool<V,E> t) {
+		v.set(Attribute.VISITED,null);
+		v.set(Attribute.color,Color.green);
 		t.show(g);
 		Iterator<Edge<E>> it = g.incidentEdges(v);
 		while (it.hasNext()){
 			Edge<E> e = it.next();
 			Vertex<V> w = g.opposite(e, v);
 			if ( ! w.has(Attribute.VISITED)) {
-				e.set(Attribute.color,Color.red);
+				e.set(Attribute.color,Color.green);
 				visitDFS(g,w,t);
 			}
 		}
@@ -44,8 +143,8 @@ public class GraphExamples<V,E> {
 	 * 
 	 */
 	public static void main(String[] args) {
-		
-		// make an undirected graph
+
+		//		 make an undirected graph
 		IncidenceListGraph<String,String> g = 
 				new IncidenceListGraph<>(false);
 		GraphExamples<String,String> ge = new GraphExamples<>();
@@ -79,15 +178,13 @@ public class GraphExamples<V,E> {
 		Edge e_j = g.insertEdge(vF,vE,"FE");
 
 		GraphTool t = new GraphTool(g,ge);
-		
+
 		//    A__B     F
 		//      /|\   /|
 		//     / | \ / |
 		//    C__D__E__G   
 		//    \     /
 		//     \___/
-		//      
+		//   
 	}
-
-
 }
