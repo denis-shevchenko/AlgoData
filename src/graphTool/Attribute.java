@@ -23,5 +23,7 @@ public enum Attribute {
     PQLOCATOR,    
     //for kruskal 
     MSF,
-    CLUSTER 
+    CLUSTER, 
+    // for topological numbering
+    DEPENDENCIES
 }

@@ -5,6 +5,7 @@ import graphTool.Attribute;
 import graphTool.GraphTool;
 
 import java.awt.Color;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -15,6 +16,22 @@ import java.util.Random;
 public class GraphExamples<V,E> {
 
 
+	@Algorithm
+	public void topologicalNumbering(Graph<V,E> g,GraphTool<V,E> t){
+		if ( ! g.isDirected()) throw new RuntimeException("should be a directed graph");
+		Iterator<Vertex<V>> it = g.vertices(); 
+		Stack<Vertex> s = new MyStack();
+		while(it.hasNext()){
+			Vertex v = it.next();
+			v.set(Attribute.DEPENDENCIES,g.inDegree(v));
+			if (g.inDegree(v)==0) s.push(v);
+		}
+		while (! s.isEmpty()){
+			
+		}
+	}
+	
+	
 	@Algorithm(vertex=true,vertex2=true)
 	public void findPath(Graph<V,E> g, Vertex<V> v,Vertex<V> v2, GraphTool<V,E> t) {
 		LinkedList<Vertex<V>> list = new LinkedList<>();
