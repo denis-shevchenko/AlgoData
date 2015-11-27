@@ -17,18 +17,31 @@ public class GraphExamples<V,E> {
 
 
 	@Algorithm
-	public void topologicalNumbering(Graph<V,E> g,GraphTool<V,E> t){
+	public void topologicalNumbering(Graph<V,E> g, GraphTool<V,E> t){
 		if ( ! g.isDirected()) throw new RuntimeException("should be a directed graph");
 		Iterator<Vertex<V>> it = g.vertices(); 
-		Stack<Vertex> s = new MyStack();
+		LinkedList<Vertex> s = new LinkedList();
 		while(it.hasNext()){
 			Vertex v = it.next();
 			v.set(Attribute.DEPENDENCIES,g.inDegree(v));
 			if (g.inDegree(v)==0) s.push(v);
 		}
+		int num=0;
 		while (! s.isEmpty()){
-			
+			Vertex<V> v = s.pop();
+			v.set(Attribute.string,""+num);
+			num++;
+			v.set(Attribute.color,Color.GREEN);
+			t.show(g);
+			Iterator<Edge<E>> eit = g.incidentOutEdges(v);
+			while (eit.hasNext()){
+				Vertex<V> w = g.opposite(eit.next(),v);
+				int depcnt = ((Integer)w.get(Attribute.DEPENDENCIES))-1;
+				w.set(Attribute.DEPENDENCIES,depcnt);
+				if (depcnt==0) s.push(w);			
+			}
 		}
+		if (num!= g.numberOfVertices()) throw new RuntimeException("graph is not acyclic!");
 	}
 	
 	
@@ -163,7 +176,7 @@ public class GraphExamples<V,E> {
 
 		//		 make an undirected graph
 		IncidenceListGraph<String,String> g = 
-				new IncidenceListGraph<>(false);
+				new IncidenceListGraph<>(true);
 		GraphExamples<String,String> ge = new GraphExamples<>();
 		Vertex vA = g.insertVertex("A");
 		vA.set(Attribute.name,"A");
@@ -193,7 +206,6 @@ public class GraphExamples<V,E> {
 		e_h.set(Attribute.weight,3.0);
 		Edge e_i = g.insertEdge(vG,vF,"GF");
 		Edge e_j = g.insertEdge(vF,vE,"FE");
-
 		GraphTool t = new GraphTool(g,ge);
 
 		//    A__B     F
