@@ -69,7 +69,15 @@ public class GraphExamples<V,E> {
 	                }
 	                Vertex<V> z = g.opposite(e, u);
 	                //Relaxation
-	                //...........
+	                double newDist = (Double) u.get(Attribute.DISTANCE);// +weight;
+	                if (newDist < (Double)z.get(Attribute.DISTANCE)){
+	                	z.set(Attribute.DISTANCE,(Double)newDist);
+	                	z.set(Attribute.string,""+newDist);
+	                	z.set(Attribute.DISCOVERY,e);
+	                	z.set(s,u);
+	                	pq.replaceKey((Locator<Double,Vertex<V>>)z.get(Attribute.PQLOCATOR),newDist);
+	                	t.show(g);
+	                }
 	            }
 	        }
 	        t.show(g);
