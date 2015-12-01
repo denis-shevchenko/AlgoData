@@ -15,6 +15,66 @@ import java.util.Random;
 
 public class GraphExamples<V,E> {
 
+	   @Algorithm(vertex=true)
+	    public void dijkstra(Graph<V,E> g,Vertex<V> s, GraphTool<V,E> t){
+	//-----------------------------------------------------------------
+
+	        
+	    	t.show(g);
+	//-----------------------------------------------------------------
+	        
+	        // sets the attribute 's' of each vertex 'u' from wich 
+	        // we can reach 's' to the value 'g' where 'g' is the gateway
+	        // for 'u' on the shortest path from 'u' to 's' 
+	        MyPriorityQueue<Double, Vertex<V>> pq = new MyPriorityQueue<>();
+	        Iterator<Vertex<V>> it = g.vertices();
+	        // put all vertices to pq and give them
+	        // an attribute Attribut.DISTANCE and PQLOCATOR
+	        while(it.hasNext()){
+	            Vertex<V> v = it.next();
+	            v.set(Attribute.DISTANCE,Double.POSITIVE_INFINITY);
+	            v.set(Attribute.string,"inf");
+	            Locator<Double,Vertex<V>> loc = pq.insert(Double.POSITIVE_INFINITY,v);
+	            v.set(Attribute.PQLOCATOR,loc);
+	            // v.set(Attribut.color, Color.red);
+	            t.show(g);
+	        }
+	        // correct the attributes for s
+	        s.set(Attribute.string,"0");
+	        s.set(Attribute.DISTANCE,0.0);
+	        t.show(g);
+	        pq.replaceKey((Locator<Double,Vertex<V>>)s.get(Attribute.PQLOCATOR),0.0);
+	        while( ! pq.isEmpty()){
+	            Vertex<V> u = pq.removeMin().element();    
+	            u.set(Attribute.color,Color.GREEN);
+	            if (u.has(Attribute.DISCOVERY)){
+	                Edge<E> e = (Edge<E>)u.get(Attribute.DISCOVERY);
+	                e.set(Attribute.color,Color.GREEN);
+	                t.show(g);
+	            }
+
+	            // now make the relaxation step for all 
+	            // neighbours:
+	            Iterator<Edge<E>> eIt;
+	            if (g.isDirected()) eIt = g.incidentInEdges(u); // backwards!
+	            else eIt = g.incidentEdges(u);
+	            while (eIt.hasNext()){
+	                Edge<E> e = eIt.next();
+	                double weight = 1.0; // default weight
+	                //Original version: if (e.has(Attribut.weight)) weight = (Double)e.get(Attribut.weight);
+	                
+	                //Whether the graph comes from graphexamples or not it has to be casted differently
+	                if (e.has(Attribute.weight)) {
+	                   weight = (Double)e.get(Attribute.weight);
+	                }
+	                Vertex<V> z = g.opposite(e, u);
+	                //Relaxation
+	                //...........
+	            }
+	        }
+	        t.show(g);
+	    }
+
 
 	@Algorithm
 	public void topologicalNumbering(Graph<V,E> g, GraphTool<V,E> t){
