@@ -14,7 +14,49 @@ import java.util.Random;
 
 
 public class GraphExamples<V,E> {
-
+	@Algorithm
+	public void kruskal(Graph<V,E> g, GraphTool<V, E> t){
+		// gives the Attribute MSF to each
+		// edge belonging to an minimal spanning forest
+		
+		// create clusters, put the vertex in it  
+		// and assign them to the vertice
+		Iterator<Vertex<V>> it = g.vertices();
+		while(it.hasNext()){
+			Vertex v =it.next();
+			ArrayList<Vertex<V>> cluster = new ArrayList<>();
+			cluster.add(v);
+			v.set(Attribute.CLUSTER,cluster);
+		}
+		PriorityQueue<Double,Edge<E>> pq = new MyPriorityQueue<>(); 	
+		Iterator<Edge<E>> eit = g.edges();
+		while(eit.hasNext()){
+			Edge e = eit.next();
+			double weight = 1;
+			if (e.has(Attribute.weight)) weight=(Double)e.get(Attribute.weight);
+			pq.insert(weight, e);
+		}
+		while (! pq.isEmpty()){
+			Edge e = pq.removeMin().element();
+			Vertex[] endPts = g.endVertices(e);
+			ArrayList<Vertex> cluster0 = (ArrayList)endPts[0].get(Attribute.CLUSTER);
+			ArrayList<Vertex> cluster1 = (ArrayList)endPts[1].get(Attribute.CLUSTER);
+			if (cluster1 != cluster0){
+				// we found an MSF edge
+				e.set(Attribute.color,Color.GREEN);
+				t.show(g);
+				for(Vertex w:cluster1){
+					cluster0.add(w);
+					w.set(Attribute.CLUSTER,cluster0);
+				}
+			}
+			
+		}
+	
+	
+	}	
+	
+	
 	   @Algorithm(vertex=true)
 	    public void dijkstra(Graph<V,E> g,Vertex<V> s, GraphTool<V,E> t){
 	//-----------------------------------------------------------------
@@ -84,6 +126,7 @@ public class GraphExamples<V,E> {
 	    }
 
 
+	   
 	@Algorithm
 	public void topologicalNumbering(Graph<V,E> g, GraphTool<V,E> t){
 		if ( ! g.isDirected()) throw new RuntimeException("should be a directed graph");
