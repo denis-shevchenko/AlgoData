@@ -204,23 +204,24 @@ public class MySuffixTree {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		
+		long te = System.nanoTime();
 		MySuffixTree st = new MySuffixTree(new File("resources/Goethe.txt"));
 		
 		//MySuffixTree st = new MySuffixTree("00101110011");
 		                                  //0123456789012345678901
-		long ts = System.currentTimeMillis();
-		st.tree.print();
+		long ts = System.nanoTime();
+		System.out.println("created suffix-trie in "+(ts-te)*1e-6+" milli s");
+		// st.tree.print();
 		// repeat the search 1'000 times
 		ArrayList<Integer> al = null;
 		for (int i=0;i<1000;i++){
-			al = (st.search("Maria".toCharArray()));
+			al = (st.search("Herrrr".toCharArray()));
 		}
-		long te= System.currentTimeMillis();
+		te= System.nanoTime();
 		TreeSet<Integer> s = new TreeSet<>();
 		s.addAll(al);
 		// st.tree.print();
-		System.out.println("pos: "+s+" time: "+(te-ts)+" micro s");
+		System.out.println("pos: "+s+"\ntime: "+(te-ts)*1e-6+" micro s");
 	}
 
 }
