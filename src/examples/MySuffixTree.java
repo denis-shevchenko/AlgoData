@@ -215,7 +215,7 @@ public class MySuffixTree {
 		// repeat the search 1'000 times
 		ArrayList<Integer> al = null;
 		for (int i=0;i<1000;i++){
-			al = (st.search("Herrrr".toCharArray()));
+			al = (st.search("Eine ganz üble Geschichte mit diesem z!".toCharArray()));
 		}
 		te= System.nanoTime();
 		TreeSet<Integer> s = new TreeSet<>();

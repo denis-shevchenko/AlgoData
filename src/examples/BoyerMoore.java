@@ -45,7 +45,7 @@ public class BoyerMoore {
 		while (i<maxI){
 			while (i<maxI && t[i++] != first){
 				cnt++;
-				// no i-1 points to the first matching char 
+				// now i-1 points to the first matching char 
 			}
 			int k=1;
 			int j=i;
