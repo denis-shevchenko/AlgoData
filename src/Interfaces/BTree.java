@@ -16,4 +16,8 @@ public interface BTree {
     public Position leftChild(Position p);
 
     public Position rightChild(Position p);
+
+    public boolean isExternal(Position p);
+
+    public int height();
 }

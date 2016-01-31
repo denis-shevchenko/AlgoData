@@ -224,7 +224,6 @@ public class MyTree<E> implements Tree<E> {
 		while (it.hasNext()) print(it.next(),ind+"..");
 	}
 
-
 	@Override
 	public E replaceElement(Position<E> p, E o) {
 		TNode n = castToTNode(p);
